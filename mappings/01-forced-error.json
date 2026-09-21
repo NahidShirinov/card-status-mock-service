@@ -1,0 +1,20 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/cards/status",
+    "headers": {
+      "X-Simulate": { "equalTo": "error" }
+    }
+  },
+  "response": {
+    "status": 500,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "result": "ERROR",
+      "errorCode": "INTERNAL_ERROR",
+      "message": "Simulated internal server error"
+    },
+    "delayDistribution": { "type": "uniform", "lower": 50, "upper": 300 }
+  }
+}
