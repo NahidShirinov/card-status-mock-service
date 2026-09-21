@@ -1,0 +1,20 @@
+{
+  "priority": 5,
+  "scenarioName": "card-status-flow",
+  "requiredScenarioState": "step-5",
+  "newScenarioState": "Started",
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/cards/status"
+  },
+  "response": {
+    "status": 500,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "result": "ERROR",
+      "errorCode": "INTERNAL_ERROR",
+      "message": "Simulated internal server error (cyclic ~1/5 requests)"
+    },
+    "delayDistribution": { "type": "uniform", "lower": 50, "upper": 300 }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "priority": 5,
+  "scenarioName": "card-status-flow",
+  "requiredScenarioState": "step-4",
+  "newScenarioState": "step-5",
+  "request": {
+    "method": "POST",
+    "urlPath": "/api/cards/status"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "transformers": [
+      "response-template"
+    ],
+    "jsonBody": {
+      "cardId": "{{jsonPath request.body '$.cardId'}}",
+      "status": "{{jsonPath request.body '$.requestedStatus'}}",
+      "result": "SUCCESS",
+      "processedAt": "{{now}}"
+    },
+    "delayDistribution": {
+      "type": "uniform",
+      "lower": 50,
+      "upper": 300
+    }
+  }
+}
