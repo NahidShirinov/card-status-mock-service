@@ -1,0 +1,11 @@
+services:
+  card-status-mock:
+    image: wiremock/wiremock:3.9.1
+    container_name: card-status-mock
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./mappings:/home/wiremock/mappings
+      - ./__files:/home/wiremock/__files
+    command:
+      - "--global-response-templating"
