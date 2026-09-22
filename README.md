@@ -29,11 +29,12 @@ java -jar wiremock-standalone.jar --port 8080 --global-response-templating --roo
 
 ## Davranış rejimləri
 
-### 1. Default (yükləmə/stress test üçün) — dövri xəta
-Heç bir xüsusi header göndərmirsinizsə, sorğular `card-status-flow` ssenarisi üzrə dövr edir:
-4 uğurlu cavab + 1 xəta (500), sonra təkrar başdan — yəni ~20% xəta faizi, sabit və təkrarlana bilən şəkildə (təsadüfi deyil, amma yük testində davamlı xəta axını yaradır).
+### 1. Default (yükləmə/stress test üçün) — ~20% sabit xəta faizi
+Heç bir xüsusi header göndərmirsinizsə, sorğunun nəticəsi **`cardId`-nin son rəqəminə** görə təyin olunur: son rəqəm `0` və ya `5` olan sorğular 500 (xəta) qaytarır (10-dan 2-si, yəni ~20%), qalanları uğurlu olur.
 
-Xəta nisbətini dəyişmək üçün `mappings/1X-cycle-*.json` fayllarına state əlavə edin/silin (məs. 10 uğurludan 1 xəta üçün 9 success state + 1 error state).
+Bu yanaşma **tamamilə stateless**-dir (heç bir paylaşılan vəziyyət saxlanmır), ona görə **paralel/konkurrent sorğularda təhlükəsizdir** — əvvəlki versiyada istifadə olunan WireMock Scenario (dövr) mexanizmi paylaşılan mutable state saxladığı üçün çoxlu paralel sorğu göndəriləndə (məs. batch endpoint 20 thread ilə işlədəndə) race condition yaradıb gözlənilməz `404 Scenario does not match` xətalarına səbəb olurdu.
+
+Xəta nisbətini dəyişmək üçün `mappings/11-random-error.json`-dakı regex-i (`.*[05]$`) uyğunlaşdırın (məs. yalnız `0`-la bitənlər üçün `.*0$` — bu, ~10% edər).
 
 Gecikmə hər cavabda 50–300ms arasında təsadüfi seçilir (`delayDistribution`).
 
@@ -54,13 +55,6 @@ curl -X POST http://localhost:8080/api/cards/status \
 ```
 
 Bu, sizin servisin **timeout/retry məntiqini** deterministik şəkildə test etməyə imkan verir (dövri ssenaridən asılı olmadan).
-
-## Scenario state-i sıfırlamaq
-
-Testlər arası dövr sayğacını sıfırlamaq üçün (WireMock admin API):
-```bash
-curl -X POST http://localhost:8080/__admin/scenarios/reset
-```
 
 ## Qeydlər / növbəti addımlar
 
