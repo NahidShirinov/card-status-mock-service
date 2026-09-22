@@ -1,11 +1,16 @@
 {
-  "priority": 5,
-  "scenarioName": "card-status-flow",
-  "requiredScenarioState": "step-5",
-  "newScenarioState": "Started",
+  "priority": 3,
   "request": {
     "method": "POST",
-    "urlPath": "/api/cards/status"
+    "urlPath": "/api/cards/status",
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": {
+          "expression": "$.cardId",
+          "matches": ".*[05]$"
+        }
+      }
+    ]
   },
   "response": {
     "status": 500,
@@ -13,7 +18,7 @@
     "jsonBody": {
       "result": "ERROR",
       "errorCode": "INTERNAL_ERROR",
-      "message": "Simulated internal server error (cyclic ~1/5 requests)"
+      "message": "Simulated internal server error (~20% of cardIds ending in 0 or 5)"
     },
     "delayDistribution": { "type": "uniform", "lower": 50, "upper": 300 }
   }
